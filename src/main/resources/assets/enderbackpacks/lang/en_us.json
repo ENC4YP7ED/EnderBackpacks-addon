@@ -1,4 +1,5 @@
 {
   "block.enderbackpacks.ender_backpack": "Ender Backpack",
-  "item.enderbackpacks.ender_backpack": "Ender Backpack"
+  "item.enderbackpacks.ender_backpack": "Ender Backpack",
+  "key.enderbackpacks.open_ender_backpack": "Open Ender Backpack"
 }

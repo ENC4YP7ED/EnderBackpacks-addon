@@ -3,10 +3,12 @@ package com.enc4yp7ed.enderbackpacks;
 import com.enc4yp7ed.enderbackpacks.registry.EBBlocks;
 import com.enc4yp7ed.enderbackpacks.registry.EBBlockEntities;
 import com.enc4yp7ed.enderbackpacks.registry.EBItems;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +27,26 @@ public class EnderBackpacks {
         // Register for common setup event to initialize integrations
         modEventBus.addListener(this::commonSetup);
 
+        // Register keybindings (client-side only)
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            registerClientKeybindings();
+        }
+
         LOGGER.info("Ender Backpacks for Dummies addon initialized successfully");
+    }
+
+    /**
+     * Register client-side keybindings.
+     * Called only on client side during mod construction.
+     */
+    private void registerClientKeybindings() {
+        try {
+            Class.forName("com.enc4yp7ed.enderbackpacks.client.EnderBackpackKeybindings")
+                .getMethod("register")
+                .invoke(null);
+        } catch (Exception e) {
+            LOGGER.error("Failed to register Ender Backpack keybindings", e);
+        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

@@ -1,4 +1,5 @@
 {
   "block.enderbackpacks.ender_backpack": "Ender-Rucksack",
-  "item.enderbackpacks.ender_backpack": "Ender-Rucksack"
+  "item.enderbackpacks.ender_backpack": "Ender-Rucksack",
+  "key.enderbackpacks.open_ender_backpack": "Ender-Rucksack öffnen"
 }
