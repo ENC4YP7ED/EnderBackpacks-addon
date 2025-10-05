@@ -18,10 +18,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout addon repository
       uses: actions/checkout@v4
       with:
+        path: addon
         fetch-depth: 0
+
+    - name: Checkout main mod repository
+      uses: actions/checkout@v4
+      with:
+        repository: ENC4YP7ED/Backpacks
+        path: Backpacks-master
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -30,14 +37,21 @@ jobs:
         distribution: 'temurin'
         cache: 'gradle'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Build main mod (Backpacks)
+      working-directory: Backpacks-master
+      run: |
+        chmod +x gradlew
+        ./gradlew build --no-configuration-cache
 
-    - name: Build with Gradle
-      run: ./gradlew build --no-configuration-cache
+    - name: Build addon (EnderBackpacks)
+      working-directory: addon
+      run: |
+        chmod +x gradlew
+        ./gradlew build --no-configuration-cache
 
     - name: Get version and commit info
       id: version_info
+      working-directory: addon
       run: |
         VERSION=$(grep 'mod_version=' gradle.properties | cut -d'=' -f2)
         SHORT_SHA=$(git rev-parse --short HEAD)
@@ -59,7 +73,7 @@ jobs:
       with:
         tag_name: ${{ steps.version_info.outputs.RELEASE_TAG }}
         name: Development Build ${{ steps.version_info.outputs.VERSION }} (${{ steps.version_info.outputs.SHORT_SHA }})
-        files: build/libs/*.jar
+        files: addon/build/libs/*.jar
         generate_release_notes: true
         prerelease: true
         body: |
