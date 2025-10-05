@@ -2,49 +2,34 @@ package com.enc4yp7ed.enderbackpacks.integration.accessories;
 
 import com.enc4yp7ed.enderbackpacks.inventory.EnderBackpackContainer;
 import com.enc4yp7ed.enderbackpacks.registry.EBItems;
-import io.wispforest.accessories.api.Accessory;
-import io.wispforest.accessories.api.slot.SlotReference;
+import com.spydnel.backpacks.api.integration.BaseBackpackAccessory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * Accessories integration for Ender Backpacks.
  * Unlike regular backpacks, ender backpacks don't store items themselves,
  * so they can always be equipped/unequipped freely.
+ * Uses the Backpack for Dummies API for base functionality.
  */
-public class EnderBackpackAccessory implements Accessory {
+public class EnderBackpackAccessory extends BaseBackpackAccessory {
 
     @Override
-    public void onEquip(ItemStack stack, SlotReference reference) {
-        // Ender backpacks don't need initialization - they use player's ender chest
+    protected Item getBackpackItem() {
+        return EBItems.ENDER_BACKPACK.get();
     }
 
+    /**
+     * Ender backpacks can always be unequipped since items are in the ender chest.
+     */
     @Override
-    public void onUnequip(ItemStack stack, SlotReference reference) {
-        // No cleanup needed - ender backpacks don't store items
-    }
-
-    @Override
-    public boolean canEquip(ItemStack stack, SlotReference reference) {
-        // Don't allow equipping if there's already an ender backpack in chest slot
-        if (reference.entity() instanceof LivingEntity livingEntity) {
-            ItemStack chestItem = livingEntity.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
-            if (chestItem.is(EBItems.ENDER_BACKPACK)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean canUnequip(ItemStack stack, SlotReference reference) {
-        // Always allow unequipping - ender backpacks don't store items
-        // Items are in the player's ender chest, not in the backpack
-        return true;
+    public boolean canUnequip(ItemStack stack, io.wispforest.accessories.api.slot.SlotReference reference) {
+        return true; // Always allow unequipping
     }
 
     /**

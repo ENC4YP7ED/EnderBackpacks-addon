@@ -2,17 +2,15 @@ package com.enc4yp7ed.enderbackpacks.networking;
 
 import com.enc4yp7ed.enderbackpacks.inventory.EnderBackpackContainer;
 import com.enc4yp7ed.enderbackpacks.registry.EBItems;
-import com.spydnel.backpacks.BackpackAccessoriesHelper;
+import com.spydnel.backpacks.api.events.BackpackEventHelper;
 import com.spydnel.backpacks.networking.OpenBackpackPayload;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -20,6 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * Handles opening ender backpacks via keybinding.
  * Opens the player's own ender chest inventory.
+ * Uses the Backpack for Dummies API for simplified backpack checking.
  */
 @EventBusSubscriber(modid = "enderbackpacks", bus = EventBusSubscriber.Bus.MOD)
 public class OpenEnderBackpackPayloadHandler {
@@ -37,16 +36,11 @@ public class OpenEnderBackpackPayloadHandler {
     public static void handleServerData(final OpenBackpackPayload data, final IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer serverPlayer) {
-                // First check chest slot for ender backpack
-                ItemStack backpack = serverPlayer.getItemBySlot(EquipmentSlot.CHEST);
-
-                // If no ender backpack in chest slot and Accessories is loaded, check accessories slot
-                if (!backpack.is(EBItems.ENDER_BACKPACK) && ModList.get().isLoaded("accessories")) {
-                    backpack = getEnderBackpackFromAccessories(serverPlayer);
-                }
+                // Check for ender backpack in chest slot and accessories slots
+                ItemStack backpack = BackpackEventHelper.getBackpackFromEntity(serverPlayer, EBItems.ENDER_BACKPACK.get());
 
                 // Open player's ender chest if wearing ender backpack
-                if (backpack.is(EBItems.ENDER_BACKPACK)) {
+                if (backpack != null && backpack.is(EBItems.ENDER_BACKPACK)) {
                     EnderBackpackContainer enderContainer = new EnderBackpackContainer(serverPlayer);
 
                     serverPlayer.openMenu(new SimpleMenuProvider(
@@ -56,16 +50,5 @@ public class OpenEnderBackpackPayloadHandler {
                 }
             }
         });
-    }
-
-    private static ItemStack getEnderBackpackFromAccessories(ServerPlayer player) {
-        // Use mixin interface for fast access (no reflection!)
-        if (player instanceof BackpackAccessoriesHelper helper) {
-            ItemStack item = helper.backpacks$getAccessoriesBackpack();
-            if (item.is(EBItems.ENDER_BACKPACK)) {
-                return item;
-            }
-        }
-        return ItemStack.EMPTY;
     }
 }

@@ -2,7 +2,8 @@ package com.enc4yp7ed.enderbackpacks.blocks;
 
 import com.enc4yp7ed.enderbackpacks.inventory.EnderBackpackContainer;
 import com.enc4yp7ed.enderbackpacks.registry.EBBlockEntities;
-import com.spydnel.backpacks.blocks.BackpackBlock;
+import com.spydnel.backpacks.api.block.BaseBackpackBlock;
+import com.spydnel.backpacks.api.block.BaseBackpackBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -21,11 +22,17 @@ import javax.annotation.Nullable;
 /**
  * Ender Backpack block - opens the player's ender chest inventory.
  * Each player sees their own ender chest contents when opening an ender backpack.
+ * Uses the Backpack for Dummies API for base functionality.
  */
-public class EnderBackpackBlock extends BackpackBlock {
+public class EnderBackpackBlock extends BaseBackpackBlock {
 
     public EnderBackpackBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected BlockEntityType<?> getBlockEntityType() {
+        return EBBlockEntities.ENDER_BACKPACK.get();
     }
 
     @Override
@@ -36,7 +43,7 @@ public class EnderBackpackBlock extends BackpackBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, EBBlockEntities.ENDER_BACKPACK.get(), EnderBackpackBlockEntity::tick);
+        return createTickerHelper(type, EBBlockEntities.ENDER_BACKPACK.get(), BaseBackpackBlockEntity::tick);
     }
 
     @Override
