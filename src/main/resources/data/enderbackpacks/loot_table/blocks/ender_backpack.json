@@ -16,8 +16,7 @@
               "function": "minecraft:copy_components",
               "include": [
                 "minecraft:custom_name",
-                "minecraft:dyed_color",
-                "minecraft:container"
+                "minecraft:dyed_color"
               ],
               "source": "block_entity"
             }

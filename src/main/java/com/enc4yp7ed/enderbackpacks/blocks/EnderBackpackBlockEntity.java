@@ -1,36 +1,28 @@
 package com.enc4yp7ed.enderbackpacks.blocks;
 
 import com.enc4yp7ed.enderbackpacks.registry.EBBlockEntities;
-import com.spydnel.backpacks.registry.BPBlockEntities;
+import com.spydnel.backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ShulkerBoxMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import com.spydnel.backpacks.registry.BPSounds;
+import net.minecraft.world.entity.player.Player;
 
 /**
- * Ender Backpack block entity - same functionality as BackpackBlockEntity but for ender backpacks.
+ * Ender Backpack block entity - does not store items itself.
+ * Items are stored in each player's ender chest inventory.
+ * This block entity only handles animations and color data.
  */
-public class EnderBackpackBlockEntity extends RandomizableContainerBlockEntity {
-    private NonNullList<ItemStack> itemStacks;
+public class EnderBackpackBlockEntity extends BlockEntity {
     public int openTicks;
     public boolean newlyPlaced;
     public int placeTicks;
@@ -41,7 +33,6 @@ public class EnderBackpackBlockEntity extends RandomizableContainerBlockEntity {
 
     public EnderBackpackBlockEntity(BlockPos pos, BlockState blockState) {
         super(EBBlockEntities.ENDER_BACKPACK.get(), pos, blockState);
-        this.itemStacks = NonNullList.withSize(27, ItemStack.EMPTY);
         this.newlyPlaced = true;
     }
 
@@ -98,22 +89,6 @@ public class EnderBackpackBlockEntity extends RandomizableContainerBlockEntity {
         }
     }
 
-    protected Component getDefaultName() {
-        return Component.translatable("container.ender_backpack");
-    }
-
-    protected NonNullList<ItemStack> getItems() {
-        return this.itemStacks;
-    }
-
-    protected void setItems(NonNullList<ItemStack> items) {
-        this.itemStacks = items;
-    }
-
-    protected AbstractContainerMenu createMenu(int id, Inventory player) {
-        return new ShulkerBoxMenu(id, player, this);
-    }
-
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
@@ -134,16 +109,15 @@ public class EnderBackpackBlockEntity extends RandomizableContainerBlockEntity {
         loadFromTag(tag, lookupProvider);
     }
 
+    @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.loadFromTag(tag, registries);
     }
 
+    @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        if (!this.trySaveLootTable(tag)) {
-            ContainerHelper.saveAllItems(tag, this.itemStacks, false, registries);
-        }
         tag.putInt("FloatTicks", this.floatTicks);
         tag.putBoolean("NewlyPlaced", this.newlyPlaced);
         tag.putInt("Color", this.color);
@@ -164,12 +138,14 @@ public class EnderBackpackBlockEntity extends RandomizableContainerBlockEntity {
         return tag;
     }
 
+    @Override
     protected void applyImplicitComponents(BlockEntity.DataComponentInput componentInput) {
         super.applyImplicitComponents(componentInput);
         DyedItemColor dyedItemColor = componentInput.get(DataComponents.DYED_COLOR);
         this.color = dyedItemColor != null ? dyedItemColor.rgb() : 0;
     }
 
+    @Override
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
         if (color != 0) {
@@ -178,16 +154,9 @@ public class EnderBackpackBlockEntity extends RandomizableContainerBlockEntity {
     }
 
     public void loadFromTag(CompoundTag tag, HolderLookup.Provider levelRegistry) {
-        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        if (!this.tryLoadLootTable(tag) && tag.contains("Items", 9)) {
-            ContainerHelper.loadAllItems(tag, this.itemStacks, levelRegistry);
-        }
         this.floatTicks = tag.getInt("FloatTicks");
         this.newlyPlaced = tag.getBoolean("NewlyPlaced");
         this.color = tag.getInt("Color");
     }
-
-    public int getContainerSize() {
-        return this.itemStacks.size();
-    }
 }
+

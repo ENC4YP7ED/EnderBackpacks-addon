@@ -4,13 +4,30 @@ An addon mod for **Backpack for Dummies** that adds Ender-themed backpacks with 
 
 ## Features
 
-- **Ender Backpack**: A special variant of the standard backpack with a default teal color (#136157)
+- **Ender Backpack**: A special variant that functions like an Ender Chest
+  - **Synced with Ender Chest**: Each player sees their own ender chest inventory when opening any ender backpack
+  - **Personal Storage**: When you open someone else's ender backpack, you see YOUR items, not theirs
+  - **Universal Access**: Access your ender chest contents from any ender backpack, anywhere
+  - Default teal color (#136157) applied on crafting
 - Fully compatible with all Backpack for Dummies features:
-  - Place and pick up backpacks
+  - Place and pick up ender backpacks
   - Works with both chest armor slot and Accessories API
-  - Multiplayer synchronization
   - Dye-able with any color
+  - Open with keybinding (default: B) when equipped
+  - Click on someone's back to access YOUR ender chest
 - Crafted by surrounding a regular backpack with ender pearls
+
+## How It Works
+
+The Ender Backpack works exactly like a vanilla Ender Chest:
+
+1. **Personal Inventory**: Each player has their own 27-slot ender chest inventory
+2. **Synced Storage**: Opening any ender backpack shows YOUR ender chest contents
+3. **Multiplayer Friendly**: Other players can't see or access your items
+4. **Block & Item Forms**:
+   - Place an ender backpack as a block - anyone can open it to access their own ender chest
+   - Wear an ender backpack - press B to access your ender chest
+   - See someone wearing an ender backpack? Click their back to access YOUR ender chest
 
 ## Requirements
 
