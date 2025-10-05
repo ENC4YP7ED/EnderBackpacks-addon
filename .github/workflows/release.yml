@@ -1,0 +1,72 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'gradle'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build --no-configuration-cache
+
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/libs/*.jar
+        generate_release_notes: true
+        draft: false
+        prerelease: false
+        name: Release ${{ github.ref_name }}
+        body: |
+          ## Ender Backpacks for Dummies ${{ steps.get_version.outputs.VERSION }}
+
+          **Addon for Backpack for Dummies** - Adds ender-themed backpacks with a teal/cyan color scheme.
+
+          ### Features
+          - ✅ Ender Backpack with default teal color (#136157)
+          - ✅ Crafted with 8 ender pearls + 1 regular backpack
+          - ✅ Full compatibility with all Backpack features (placement, pickup, accessories, multiplayer)
+          - ✅ Can be dyed to any color
+
+          ### Requirements
+          - **Minecraft 1.21.1**
+          - **NeoForge 21.1.137+**
+          - **Backpack for Dummies** (main mod - REQUIRED)
+          - **Accessories** (optional, for dedicated accessory slots)
+
+          ### Installation
+          1. Download the `.jar` file below
+          2. Install [Backpack for Dummies](https://github.com/ENC4YP7ED/Backpacks) first
+          3. Install NeoForge 21.1.137+ for Minecraft 1.21.1
+          4. Place both jars in your `mods` folder
+          5. (Optional) Install [Accessories](https://modrinth.com/mod/accessories) for enhanced features
+
+          ### Changes
+          See the auto-generated release notes below for details.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

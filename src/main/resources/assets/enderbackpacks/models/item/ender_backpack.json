@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "enderbackpacks:item/ender_backpack"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "backpacks:dyed": 1
+      },
+      "model": "enderbackpacks:item/dyed_ender_backpack"
+    }
+  ]
+}

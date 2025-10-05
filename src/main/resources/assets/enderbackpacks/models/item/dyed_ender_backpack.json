@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "enderbackpacks:item/ender_backpack_base",
+    "layer1": "enderbackpacks:item/ender_backpack_overlay"
+  }
+}

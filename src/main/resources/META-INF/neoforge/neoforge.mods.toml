@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "enderbackpacks"
+version = "1.0.0"
+displayName = "Ender Backpacks for Dummies"
+description = '''
+Addon for Backpack for Dummies that adds Ender Backpacks with a teal/cyan theme.
+Requires the main Backpack for Dummies mod to function.
+'''
+logoFile = "logo.png"
+credits = "Created by ENC4YP7ED"
+authors = "ENC4YP7ED"
+displayURL = "https://github.com/ENC4YP7ED/EnderBackpacks"
+
+[[dependencies.enderbackpacks]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.enderbackpacks]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.22)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.enderbackpacks]]
+modId = "backpacks"
+type = "required"
+versionRange = "[1.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
